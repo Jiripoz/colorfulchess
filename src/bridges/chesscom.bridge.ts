@@ -1,17 +1,12 @@
 import { PiecesManager } from "src/chess/colorpieces";
 import type { ChessPiecesBridge } from "./bridge";
-import type {
-  ChessPiece,
-  ChessColor,
-  ChessPieceType,
-  Position,
-  HighlightConfig,
-} from "src/chess/types";
+import type { ChessPiece, ChessColor, ChessPieceType, Position, PiecesToHighlight } from "src/types/types";
+import { highlightConfig } from "src/stores/storage";
 
 const ChessTypeMap: Record<ChessPieceType, string> = {
-  Pawn: "p",
-  Knight: "n",
-  Bishop: "b",
+  Pawns: "p",
+  Knights: "n",
+  Bishops: "b",
   Rooks: "r",
   Queen: "q",
   King: "k",
@@ -23,17 +18,14 @@ const ChessColorMap: Record<ChessColor, string> = {
 
 export class ChessComBridge implements ChessPiecesBridge {
   private piecesManager?: PiecesManager;
+  public tagName = "chess-board";
   getPositionFromString(str: string): Position {
-    const X = parseInt(str.match(/square\-(\d)\d/)[0]);
-    const Y = parseInt(str.match(/square\-\d(\d)/)[0]);
+    const X = parseInt(str.match(/\d\d/)[0].slice(0, -1));
+    const Y = parseInt(str.match(/\d\d/)[0].slice(1));
     return { X, Y };
   }
 
-  parsePieceInfo(
-    cssClass: string,
-    type: ChessPieceType,
-    color: ChessColor
-  ): ChessPiece {
+  parsePieceInfo(cssClass: string, type: ChessPieceType, color: ChessColor): ChessPiece {
     const position = this.getPositionFromString(cssClass);
     return {
       ...position,
@@ -45,9 +37,7 @@ export class ChessComBridge implements ChessPiecesBridge {
   parsePiecesInfo(type: ChessPieceType, color: ChessColor): ChessPiece[] {
     const shortType = ChessTypeMap[type];
     const shortColor = ChessColorMap[color];
-    const elements = document.getElementsByClassName(
-      `piece ${shortColor}${shortType}`
-    );
+    const elements = document.getElementsByClassName(`piece ${shortColor}${shortType}`);
     const pieces: ChessPiece[] = [];
     for (const element of elements) {
       const piece = this.parsePieceInfo(element.className, type, color);
@@ -58,6 +48,7 @@ export class ChessComBridge implements ChessPiecesBridge {
 
   updateChessPieces() {
     const pieces = Object.keys(ChessTypeMap);
+
     const whitePieces = pieces
       .map((p) => this.parsePiecesInfo(<ChessPieceType>p, "White"))
       .reduce((a, b) => a.concat(b));
@@ -68,8 +59,34 @@ export class ChessComBridge implements ChessPiecesBridge {
     this.piecesManager = new PiecesManager(whitePieces, blackPieces);
   }
 
-  updateHighlights(highlightConfig: HighlightConfig) {
-    this.piecesManager.calculateInfluence(highlightConfig);
-    throw new Error("Method not implemented.");
+  updateHighlights = async () => {
+    const highlight = await highlightConfig.get();
+    this.clearBoard();
+    const squaresToColor = this.piecesManager.calculateInfluence(highlight);
+    this.colorSquares(squaresToColor.White, "rgb(235, 97, 80)");
+    this.colorSquares(squaresToColor.Black, "rgb(20, 158, 175)");
+  };
+
+  clearBoard() {
+    const boardChildren = document.getElementsByTagName("chess-board")[0].children;
+    const childrenToRemove: Element[] = [];
+    for (const children of boardChildren) {
+      if (children.hasAttribute("jiri")) {
+        childrenToRemove.push(children);
+      }
+    }
+    childrenToRemove.forEach((e) => e.remove());
+  }
+
+  colorSquares(squaresToColor: [number, number][], highlightColor: string) {
+    const chessBoard = document.getElementsByTagName("chess-board")[0];
+    const baseStyle = `background-color: ${highlightColor}; opacity: 0.4;`;
+    for (const square of squaresToColor) {
+      const newdiv = document.createElement("div");
+      newdiv.className = `highlight square-${square[0]}${square[1]}`;
+      newdiv.setAttribute("jiri", "");
+      newdiv.style.cssText += baseStyle;
+      chessBoard.appendChild(newdiv);
+    }
   }
 }

@@ -1,4 +1,4 @@
-import type { ChessColor, ChessPieceType, Position } from "./types";
+import type { ChessColor, ChessPieceType, Position } from "../types/types";
 
 export type PieceMovement = {
   lineDeltas?: [number, number][];
@@ -6,8 +6,8 @@ export type PieceMovement = {
 };
 
 const BasePieceMovements: Record<ChessPieceType, PieceMovement> = {
-  Pawn: {},
-  Knight: {
+  Pawns: {},
+  Knights: {
     fixedDeltas: [
       [2, 1],
       [1, 2],
@@ -19,7 +19,7 @@ const BasePieceMovements: Record<ChessPieceType, PieceMovement> = {
       [-1, -2],
     ],
   },
-  Bishop: {
+  Bishops: {
     lineDeltas: [
       [1, 1],
       [1, -1],
@@ -63,7 +63,7 @@ const BasePieceMovements: Record<ChessPieceType, PieceMovement> = {
 
 const WhitePieceMovements: Record<ChessPieceType, PieceMovement> = {
   ...BasePieceMovements,
-  Pawn: {
+  Pawns: {
     fixedDeltas: [
       [-1, 1],
       [1, 1],
@@ -73,7 +73,7 @@ const WhitePieceMovements: Record<ChessPieceType, PieceMovement> = {
 
 const BlackPieceMovements: Record<ChessPieceType, PieceMovement> = {
   ...BasePieceMovements,
-  Pawn: {
+  Pawns: {
     fixedDeltas: [
       [-1, -1],
       [1, -1],
@@ -81,10 +81,7 @@ const BlackPieceMovements: Record<ChessPieceType, PieceMovement> = {
   },
 };
 
-export const PieceMovements: Record<
-  ChessColor,
-  Record<ChessPieceType, PieceMovement>
-> = {
+export const PieceMovements: Record<ChessColor, Record<ChessPieceType, PieceMovement>> = {
   White: WhitePieceMovements,
   Black: BlackPieceMovements,
 };

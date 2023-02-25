@@ -1,11 +1,5 @@
 export type ChessColor = "Black" | "White";
-export type ChessPieceType =
-  | "Pawn"
-  | "Knight"
-  | "Bishop"
-  | "Rooks"
-  | "Queen"
-  | "King";
+export type ChessPieceType = "Pawns" | "Knights" | "Bishops" | "Rooks" | "Queen" | "King";
 
 export type ChessPiece = {
   X: number;
@@ -31,3 +25,14 @@ export type HighlightConfig = {
     color: ChessColor;
   }[];
 };
+
+export type PiecesFilter = {
+  Pawns: boolean;
+  Knights: boolean;
+  Bishops: boolean;
+  Rooks: boolean;
+  Queen: boolean;
+  King: boolean;
+};
+
+export type PiecesToHighlight = Record<ChessColor, PiecesFilter>;

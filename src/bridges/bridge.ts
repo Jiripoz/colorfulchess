@@ -1,6 +1,5 @@
-import type { HighlightConfig } from "../chess/types";
-
 export interface ChessPiecesBridge {
+  tagName: string;
   updateChessPieces();
-  updateHighlights(highlightConfig: HighlightConfig);
+  updateHighlights();
 }

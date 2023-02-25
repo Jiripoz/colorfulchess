@@ -1,11 +1,11 @@
 import type { ChessPiecesBridge } from "./bridge";
-import type { HighlightConfig } from "src/chess/types";
+import type { PiecesToHighlight } from "src/types/types";
 
 export class LichessBridge implements ChessPiecesBridge {
   updateChessPieces() {
     throw new Error("Method not implemented.");
   }
-  updateHighlights(highlightConfig: HighlightConfig) {
+  updateHighlights(highlightConfig: PiecesToHighlight) {
     throw new Error("Method not implemented.");
   }
 }
