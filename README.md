@@ -1,39 +1,27 @@
-# Svelte Typescript Chrome Extension Boilerplate
+# Colorful Chess - Chrome Extension
 
-> Boilerplate for Chrome Extension Svelte Typescript project
+Colorful Chess is a chrome extension made to be used on [chess.com](chess.com) and [lichess.com](lichess.com). It's purpose is to help the player to improve its understanding of the influence each piece exerts on the board.
 
-## Features
+## Installation
 
--   [Svelte](https://svelte.dev/)
--   [TypeScript](https://www.typescriptlang.org/)
--   [Vite](https://vitejs.dev/)
--   [CRXJS Vite Plugin](https://github.com/crxjs/chrome-extension-tools/blob/main/packages/vite-plugin/README.md)
--   [Chrome Extensions Manifest V3](https://developer.chrome.com/docs/extensions/mv3/intro/)
-
-## Development
+This project requires the `npm` package manager. To install it's dependencies, run the following command on the project folder:
 
 ```bash
 # install dependencies
 npm i
 
 # build files to `/dist` directory
-# HMR for extension pages and content scripts
-npm run dev
-```
-
-## Build
-
-```bash
-# build files to `/dist` directory
-$ npm run build
+npm run build
 ```
 
 ## Load unpacked extensions
-
-[Getting Started Tutorial](https://developer.chrome.com/docs/extensions/mv3/getstarted/)
 
 1. Open the Extension Management page by navigating to `chrome://extensions`.
 2. Enable Developer Mode by clicking the toggle switch next to `Developer mode`.
 3. Click the `LOAD UNPACKED` button and select the `/dist` directory.
 
-![Example](https://wd.imgix.net/image/BhuKGJaIeLNPW9ehns59NfwqKxF2/vOu7iPbaapkALed96rzN.png?auto=format&w=571)
+## Usage
+
+White playing, open the extension popup and toggle which pieces you want.
+
+In the current version it only works on [chess.com](www.chess.com). Future commits will be made to address this.
