@@ -1,6 +1,6 @@
 import { PiecesManager } from "src/chess/colorpieces";
 import type { ChessPiecesBridge } from "./bridge";
-import type { ChessPiece, ChessColor, ChessPieceType, Position, PiecesToHighlight } from "src/types/types";
+import type { ChessPiece, ChessColor, ChessPieceType, Position } from "src/types/types";
 import { highlightConfig } from "src/stores/storage";
 
 const ChessTypeMap: Record<ChessPieceType, string> = {
@@ -63,8 +63,15 @@ export class ChessComBridge implements ChessPiecesBridge {
     const highlight = await highlightConfig.get();
     this.clearBoard();
     const squaresToColor = this.piecesManager.calculateInfluence(highlight);
+    const hangingPieces = this.piecesManager.calculateHanging(highlight);
+    // Record<ChessColor, [number, number][]>
+
     this.colorSquares(squaresToColor.White, "rgb(235, 97, 80)");
     this.colorSquares(squaresToColor.Black, "rgb(20, 158, 175)");
+
+    this.colorSquares(hangingPieces.HWhite, "rgb(8, 131, 5)");
+    this.colorSquares(hangingPieces.HBlack, "rgb(222, 252, 23)");
+    
   };
 
   clearBoard() {
@@ -88,5 +95,19 @@ export class ChessComBridge implements ChessPiecesBridge {
       newdiv.style.cssText += baseStyle;
       chessBoard.appendChild(newdiv);
     }
+  }
+  createArrows() {
+    // const chessBoard = document.getElementsByTagName("chess-board")[0];
+    // const baseStyle = `fill: rgba(255, 170, 0, 0.8); opacity: 0.8`
+    // const svgViewBox = chessBoard.getElementsByClassName("arrows")[0];
+    // const testArrow = document.createElement("polygon");
+    // testArrow.id = "arrow-d7d5"
+    // testArrow.setAttribute("data-arrow", "d7d5")
+    // testArrow.className = "arrow";
+    // testArrow.setAttribute("jiri", "");
+    // svgViewBox.appendChild(testArrow);
+
+
+
   }
 }

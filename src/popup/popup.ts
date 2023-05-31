@@ -1,13 +1,15 @@
 import type { ChessPiecesBridge } from "src/bridges/bridge";
-import Filters from "src/components/Filters.svelte";
-import { highlightConfig } from "src/stores/storage";
+import Popup from "src/components/Popup.svelte";
+import { highlightConfig, settingsStorage } from "src/stores/storage";
 
 const target = document.getElementById("app");
 
-function render() {
-  highlightConfig.get().then((config) => {
-    new Filters({ target, props: { highlight: config } });
+async function render() {
+  const settings = await settingsStorage.get();
+  highlightConfig.get().then(config => {
+    new Popup({ target, props: { highlight: config, settings } });
   });
 }
+
 
 window.addEventListener("DOMContentLoaded", render);

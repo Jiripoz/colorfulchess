@@ -1,14 +1,16 @@
 <script lang="ts">
   import { updateHighlightConfig } from "src/stores/storage";
-  import type { ChessColor, PiecesToHighlight } from "src/types/types";
+  import type { HighlightConfig, UpdateDisplayFirstKey, UpdateDisplaySecondKey } from "src/types/types";
 
-  export let highlight: PiecesToHighlight;
+  export let highlight: HighlightConfig;
 
-  const updateDisplay: (color: ChessColor, piece: string) => Promise<void> = async (color, piece) => {
-    await updateHighlightConfig(color, piece);
+  const updateDisplay: (firstKey: UpdateDisplayFirstKey, secondKey: UpdateDisplaySecondKey) => Promise<void> = async (firstKey, secondKey) => {
+    await updateHighlightConfig(firstKey, secondKey);
+    console.log("updatehighligh ok");
     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-    const response = await chrome.tabs.sendMessage(tab.id, { greeting: "hello" });
-  };
+    const response = await chrome.tabs.sendMessage(tab.id, { greeting: "hello" })
+  }
+
 </script>
 
 <div class="container">
@@ -62,6 +64,20 @@
     <div>
       <div>Black Pawns</div>
       <input type="checkbox" checked={highlight.Black.Pawns} on:click={() => updateDisplay("Black", "Pawns")} />
+    </div>
+  </div>
+  <div class="arrows">
+    <div>
+      <div>Hanging Black</div>
+      <input type="checkbox" checked={highlight.Hanging.HBlack} on:click={() => updateDisplay("Hanging", "HBlack")} />
+    </div>
+    <div>
+      <div>Hanging White</div>
+      <input type="checkbox" checked={highlight.Hanging.HWhite} on:click={() => updateDisplay("Hanging", "HWhite")} />
+    </div>
+    <div>
+      <div>Arrow teste</div>
+      <input type="checkbox" checked={highlight.Arrow.State} on:click={() => updateDisplay("Arrow", "State")} />
     </div>
   </div>
 </div>

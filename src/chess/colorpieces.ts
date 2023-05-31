@@ -1,11 +1,11 @@
 import { PieceMovements } from "./piece_movements";
-import type { ChessColor, ChessPiece, ChessPieceType, Highlight, PiecesToHighlight } from "../types/types";
+import type { ChessColor, ChessPiece, ChessPieceType, HangingHighlight, Hangingtype, HighlightConfig } from "../types/types";
 
 export class PiecesManager {
   constructor(private whitePieces: ChessPiece[], private blackPieces: ChessPiece[]) {
-    this.allPiecesCoordinates = this.whitePieces.concat(this.blackPieces);
+    this.allPieces = this.whitePieces.concat(this.blackPieces);
   }
-  allPiecesCoordinates: ChessPiece[];
+  allPieces: ChessPiece[];
 
   verifyBoardLimit(x: number, y: number) {
     if (x < 1 || x > 8) {
@@ -17,7 +17,7 @@ export class PiecesManager {
     }
   }
   verifyColision(x: number, y: number): boolean {
-    return this.allPiecesCoordinates.filter((piece) => piece.X == x && piece.Y == y).length != 0;
+    return this.allPieces.filter((piece) => piece.X == x && piece.Y == y).length != 0;
   }
   calculateInfluenceForPieces(pieces: ChessPiece[], color: ChessColor, key: ChessPieceType) {
     const squaresToColor: [number, number][] = [];
@@ -49,18 +49,31 @@ export class PiecesManager {
     return squaresToColor;
   }
 
-  calculateInfluence(highlightConfig: PiecesToHighlight): Record<ChessColor, [number, number][]> {
-    const squaresToColor: [number, number][] = [];
+  calculateInfluence(highlightConfig: HighlightConfig | "All_Pieces"): Record<ChessColor, [number, number][]> {
     const whitesToColor: [number, number][] = [];
     const blackToColor: [number, number][] = [];
+    
+    if (highlightConfig=="All_Pieces"){
+      const chesPieces = ["Pawns", "Knights", "Bishops", "Rooks", "Queen", "King"];
+      for (const piece of chesPieces){
+        blackToColor.push(...this.calculateInfluenceForPieces(this.blackPieces, "Black", <ChessPieceType>piece));
+        whitesToColor.push(...this.calculateInfluenceForPieces(this.whitePieces, "White", <ChessPieceType>piece));
+      } 
+      const piecesToColor ={
+        White: Array.from(new Set(whitesToColor)),
+        Black: Array.from(new Set(blackToColor))
+      }
+      return piecesToColor
+    }
 
+    
     for (const key of Object.keys(highlightConfig.Black)) {
       if (highlightConfig.Black[key] == false) {
         continue;
       }
       blackToColor.push(...this.calculateInfluenceForPieces(this.blackPieces, "Black", <ChessPieceType>key));
     }
-    for (const key of Object.keys(highlightConfig.Black)) {
+    for (const key of Object.keys(highlightConfig.White)) {
       if (highlightConfig.White[key] == false) {
         continue;
       }
@@ -71,6 +84,33 @@ export class PiecesManager {
       Black: Array.from(new Set(blackToColor)),
     };
     return piecesToColor;
+  }
+
+  calculateHanging(hangingConfig: HangingHighlight): Record<Hangingtype, [number,number][]> {
+    const hangingBlack: [number, number][] = []
+    const hangingWhite: [number, number][] = []
+    const allPiecesInfluence = this.calculateInfluence("All_Pieces");
+    if(hangingConfig.Hanging.HBlack){
+      this.blackPieces.forEach((piece) => {
+        const coordinates: [number, number] = [piece.X, piece.Y];
+        if(!allPiecesInfluence.Black.some(influence => influence[0] === piece.X && influence[1] === piece.Y)){
+          hangingBlack.push(coordinates);
+        }})
+      };
+    if(hangingConfig.Hanging.HWhite){
+      this.whitePieces.forEach((piece) => {
+        const coordinates: [number, number] = [piece.X, piece.Y];
+        if(!allPiecesInfluence.White.some(influence => influence[0] === piece.X && influence[1] === piece.Y)){
+          hangingWhite.push(coordinates);
+        }
+      })
+    }
+
+    const hangingToColor = {
+      HBlack: Array.from(new Set(hangingBlack)),
+      HWhite: Array.from(new Set(hangingWhite))
+    } 
+    return hangingToColor
   }
 }
 
